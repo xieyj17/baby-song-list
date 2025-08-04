@@ -5,9 +5,11 @@ from tools.tools import search_tool, post_playlist_tool
 SILLICONFLOW_API_KEY = os.getenv('SILLICONFLOW_API_KEY')
 
 class AIAgent:
-    def __init__(self, system_prompt, playlist_id, max_retries=3):
+    def __init__(self, system_prompt, playlist_id, credentials_file="credentials.json", token_file="token.json",max_retries=3):
         self.system_prompt = system_prompt
         self.playlist_id = playlist_id
+        self.credentials_file = credentials_file
+        self.token_file = token_file
         self.max_retries = max_retries
         self.client = OpenAI(
                               api_key=SILLICONFLOW_API_KEY, 
@@ -96,8 +98,8 @@ class AIAgent:
                 is_relevant = self.judge_video_relevance(user_prompt, video_info['title'], video_info['description'])
                 
                 if is_relevant:
-                    print(f"\nAgent: Found relevant video: {video_info['title']}")
-                    result = self.tools["post_playlist"](self.playlist_id, video_info['id'])
+                    print(f"\nAgent: Found relevant video: {video_info['title']}")    
+                    result = self.tools["post_playlist_tool"](video_info['url'], self.playlist_id, self.credentials_file, self.token_file, self.token_file)
                     print(f"Agent: {result}")
                     return # Success, exit the function
                 else:
